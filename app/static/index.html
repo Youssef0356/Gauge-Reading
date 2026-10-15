@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gauge Reading</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 720px; }
+    label { display: block; margin-top: 0.75rem; font-weight: 600; }
+    input, select { margin-top: 0.25rem; }
+    .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; }
+    pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow: auto; }
+    img { max-width: 100%; margin-top: 1rem; border: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <h1>Analog Gauge Reader</h1>
+  <form id="form">
+    <label>Image <input type="file" id="image" accept="image/*" required /></label>
+    <div class="row">
+      <label>Min value <input type="number" id="min_value" value="0" step="any" /></label>
+      <label>Max value <input type="number" id="max_value" value="100" step="any" /></label>
+    </div>
+    <div class="row">
+      <label>Unit <input type="text" id="unit" value="bar" /></label>
+      <label>Direction
+        <select id="clockwise">
+          <option value="true">Clockwise</option>
+          <option value="false">Counter-clockwise</option>
+        </select>
+      </label>
+    </div>
+    <button type="submit">Read gauge</button>
+  </form>
+  <img id="preview" alt="preview" />
+  <h2>Result</h2>
+  <pre id="result">No result yet.</pre>
+
+  <script>
+    const form = document.getElementById('form');
+    const preview = document.getElementById('preview');
+    const result = document.getElementById('result');
+
+    document.getElementById('image').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) preview.src = URL.createObjectURL(file);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = document.getElementById('image').files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('image', file);
+      const params = new URLSearchParams({
+        min_value: document.getElementById('min_value').value,
+        max_value: document.getElementById('max_value').value,
+        unit: document.getElementById('unit').value,
+        clockwise: document.getElementById('clockwise').value,
+      });
+      result.textContent = 'Reading...';
+      try {
+        const res = await fetch('/api/v1/gauge/detect?' + params.toString(), {
+          method: 'POST',
+          body: fd,
+        });
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        result.textContent = 'Error: ' + err;
+      }
+    });
+  </script>
+</body>
+</html>

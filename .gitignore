@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+.env.*
+
+# Training data and runs (huge)
+GaugeBBStraining/
+scripts/gauge_training/
+runs/
+*.cache
+
+# Large artifacts
+*.pt
+*.pth
+*.onnx
+*.engine
+*.bin
+
+# Training data, outputs, caches
+runs/
+app/gauge-analog*/
+gauge-analog*/
+GaugeBBStraining/datasets/
+*.cache
+.pytest_cache/
+
+# Model weights/exports are too large for a normal git push.
+# Keep the directory itself via .gitkeep, but ignore weight files.
+app/services/gauge_detection/models/*.pt
+app/services/gauge_detection/models/*.pth
+app/services/gauge_detection/models/*.onnx
+app/services/gauge_detection/models/*.bin
+app/services/gauge_detection/models/*.xml
+app/services/gauge_detection/models/*.yaml
+app/services/gauge_detection/models/*/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

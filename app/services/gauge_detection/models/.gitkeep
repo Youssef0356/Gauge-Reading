@@ -1,0 +1,2 @@
+# Model weights are intentionally not committed.
+# Place gauge.pt or the gauge_openvino_model/ directory here (see README).
